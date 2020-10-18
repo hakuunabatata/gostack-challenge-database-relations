@@ -1,22 +1,34 @@
-import { inject, injectable } from 'tsyringe';
+import { inject, injectable } from 'tsyringe'
 
-import AppError from '@shared/errors/AppError';
+import AppError from '@shared/errors/AppError'
 
-import Customer from '../infra/typeorm/entities/Customer';
-import ICustomersRepository from '../repositories/ICustomersRepository';
+import Customer from '../infra/typeorm/entities/Customer'
+import ICustomersRepository from '../repositories/ICustomersRepository'
 
 interface IRequest {
-  name: string;
-  email: string;
+  name: string
+  email: string
 }
 
 @injectable()
 class CreateCustomerService {
-  constructor(private customersRepository: ICustomersRepository) {}
+  constructor(
+    @inject('CustomersRepository')
+    private customersRepository: ICustomersRepository,
+  ) {}
 
   public async execute({ name, email }: IRequest): Promise<Customer> {
-    // TODO
+    const findCustomer = await this.customersRepository.findByEmail(email)
+
+    if (findCustomer) throw new AppError('Email ja Cadastrado')
+
+    const newCustomer = await this.customersRepository.create({
+      name,
+      email,
+    })
+
+    return newCustomer
   }
 }
 
-export default CreateCustomerService;
+export default CreateCustomerService

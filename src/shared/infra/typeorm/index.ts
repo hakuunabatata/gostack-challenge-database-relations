@@ -1,9 +1,9 @@
-import { createConnection, getConnectionOptions, Connection } from 'typeorm';
+import { createConnection, getConnectionOptions, Connection } from 'typeorm'
 
 export default async (name = 'default'): Promise<Connection> => {
-  const defaultOptions = await getConnectionOptions();
+  const defaultOptions = await getConnectionOptions()
 
-  return createConnection(
+  const connection = createConnection(
     Object.assign(defaultOptions, {
       name,
       database:
@@ -11,5 +11,7 @@ export default async (name = 'default'): Promise<Connection> => {
           ? 'gostack_desafio09_tests'
           : defaultOptions.database,
     }),
-  );
-};
+  )
+
+  return connection
+}
